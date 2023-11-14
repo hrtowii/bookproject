@@ -2,8 +2,8 @@ import React from 'react'
 
 function Signup() {
   return (
-    <div>
-      <h1>Gm</h1>
+    <div className='content'>
+      <h1>Sign up</h1>
     </div>
   )
 }

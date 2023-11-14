@@ -8,6 +8,10 @@ app.get("/api/v1/hello", (_req, res) => {
   res.json({ message: "Hello, world!" });
 });
 
+// app.get("/", (_req, res) => {
+//   res.json({ message: "Hello, world!" });
+// });
+
 app.listen(port, () => {
   console.log("Server listening on port", port);
 });
