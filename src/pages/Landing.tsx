@@ -32,7 +32,7 @@ export function LandingContent() {
         <p>Have you ever wanted to start reading more, only to then forget what books you wanted to read?</p>
         <p>Fret not! With anybooks, you can add any books you find to our page and we'll keep track of them for you.</p>
       </div>
-      <CoolButton link='/test'/>
+      <CoolButton link='/booklist'/>
     </div>
     </>
   )

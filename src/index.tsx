@@ -9,7 +9,9 @@ import {Landing, LandingContent} from './pages/Landing.tsx'
 import Carousel from './components/carousel.tsx'
 import Navbar from './components/Navbar.tsx'
 import ErrorPage from './pages/error-page.tsx';
-import Contact from './test.tsx'
+import Signup from './pages/Signup.tsx'
+import Login from './pages/Login.tsx'
+import TestComponent from './test.tsx'
 
 import './index.css'
 
@@ -26,11 +28,29 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/test',
+    path: '/booklist', /* probably will be a search for adding and searching books */
     element:
     <>
       <Navbar />
-      <Contact />
+      <TestComponent />
+    </>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/signup',
+    element:
+    <>
+      <Navbar />
+      <Signup />
+    </>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/login',
+    element:
+    <>
+      <Navbar />
+      <Login />
     </>,
     errorElement: <ErrorPage />,
   }
