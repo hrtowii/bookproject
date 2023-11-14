@@ -1,11 +1,14 @@
 import express from "express";
+import cors from 'cors';
 
 const port = process.env.PORT || 3000;
 
 const app = express();
 
 app.get("/api/v1/hello", (_req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
   res.json({ message: "Hello, world!" });
+  // res.send({ "msg": "This has CORS enabled 🎈" })
 });
 
 // app.get("/", (_req, res) => {
