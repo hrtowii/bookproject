@@ -1,7 +1,7 @@
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import booksvg from '/booksvg.svg'
-import CoolButton from './CoolButton.tsx'
+import CoolButton from '../components/CoolButton.tsx'
 import './Landing.css'
 
 export function Landing() {

@@ -2,7 +2,6 @@ import React from 'react'
 import {NavLink} from 'react-router-dom';
 import booksvg from '/booksvg.svg'
 import './Navbar.css'
-import CoolButton from './CoolButton';
 
 const isActiveStyle = {
     textDecoration: 'underline 0.1em var(--lighteraccent)',

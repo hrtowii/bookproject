@@ -5,10 +5,10 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 
-import {Landing, LandingContent} from './landing.tsx'
-import Carousel from './carousel.tsx'
-import Navbar from './Navbar.tsx'
-import ErrorPage from './error-page.tsx';
+import {Landing, LandingContent} from './pages/Landing.tsx'
+import Carousel from './components/carousel.tsx'
+import Navbar from './components/Navbar.tsx'
+import ErrorPage from './pages/error-page.tsx';
 import Contact from './test.tsx'
 
 import './index.css'
