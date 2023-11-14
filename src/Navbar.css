@@ -1,0 +1,26 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 12px;
+    height: 65px;
+    background-color: var(--lighterbackground);
+}
+
+.navlinks {
+    display: flex;
+    align-items: center;
+}
+.navbar a {
+    text-decoration: none;
+    padding: 12px;
+    color: var(--accent);
+}
+.navbar p {
+    margin: 0;
+}
+
+.navbar img {
+    max-width: 40px;
+    margin: 0px 8px 0px 4px;
+}
