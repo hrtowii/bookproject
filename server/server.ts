@@ -4,10 +4,22 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import multer from 'multer';
+import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import {bookList, book} from './model/BookList.js';
 import user from "./model/User.js";
 import path from "path";
+
+// readup on: callback fns, asynchronous js (promises, async/await etc) because im bad at them
+mongoose
+  .connect("mongodb://localhost/bookdb") // create here https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database#setting-up-mongodb-on-macos
+  .then(() => {
+    console.log("MONGO CONNECTION OPEN!!!");
+  })
+  .catch((err) => {
+    console.log("OH NO MONGO CONNECTION ERROR!!!!");
+    console.log(err);
+  });
 
 var dir = './uploads';
 var upload = multer({
@@ -320,6 +332,9 @@ app.get("/api/v1/get-book", (req, res) => {
 
 });
 
+process.on('uncaughtException', function (err) {
+  console.log(err);
+}); 
 
 app.listen(port, () => {
   console.log("Server listening on port", port);
