@@ -1,24 +1,51 @@
 import express from "express";
 import cors from 'cors';
-import bcrypt from 'bcrypt';
-import jwt from 'jwt';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import fs from 'fs';
+import multer from 'multer';
+import bodyParser from 'body-parser';
 import {bookList, book} from './model/BookList.js';
 import user from "./model/User.js";
+import path from "path";
+
+var dir = './uploads';
+var upload = multer({
+  storage: multer.diskStorage({
+
+    destination: function (req, file, callback) {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      }
+      callback(null, './uploads');
+    },
+    filename: function (req, file, callback) { callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); }
+
+  }),
+
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname)
+    if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+      return callback(/*res.end('Only images are allowed')*/ null, false)
+    }
+    callback(null, true)
+  }
+});
 
 const port = process.env.PORT || 3000;
 
 const app = express();
+app.use(cors());
+app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: false
+}));
 
-app.get("/api/v1/hello", (_req, res) => {
+app.get("/api/v1/hello", (req, res) => {
   res.set('Access-Control-Allow-Origin', '*');
   res.json({ message: "Hello, world!" });
-  // res.send({ "msg": "This has CORS enabled 🎈" })
+  // res.send({ "message": "This is a .send" })
 });
-
-// app.get("/", (_req, res) => {
-//   res.json({ message: "Hello, world!" });
-// });
 
 /* login api */
 app.post("/api/v1/login", (req, res) => {
@@ -60,11 +87,11 @@ app.post("/api/v1/login", (req, res) => {
 });
 
 /* register api */
-app.post("/api/v1/register", (req, res) => {
+app.post("/api/v1/register", async (req, res) => {
   try {
     if (req.body && req.body.username && req.body.password) {
 
-      user.find({ username: req.body.username }, (err, data) => {
+      const data = await user.find({ username: req.body.username });
 
         if (data.length == 0) {
 
@@ -72,19 +99,7 @@ app.post("/api/v1/register", (req, res) => {
             username: req.body.username,
             password: req.body.password
           });
-          User.save((err, data) => {
-            if (err) {
-              res.status(400).json({
-                errorMessage: err,
-                status: false
-              });
-            } else {
-              res.status(200).json({
-                status: true,
-                title: 'Registered Successfully.'
-              });
-            }
-          });
+          await User.save();
 
         } else {
           res.status(400).json({
@@ -92,9 +107,6 @@ app.post("/api/v1/register", (req, res) => {
             status: false
           });
         }
-
-      });
-
     } else {
       res.status(400).json({
         errorMessage: 'Add proper parameter first!',
@@ -103,7 +115,7 @@ app.post("/api/v1/register", (req, res) => {
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!',
+      errorMessage: 'Something went wrong!' + e,
       status: false
     });
   }
@@ -126,8 +138,15 @@ function checkUserAndGenerateToken(data, req, res) {
   });
 }
 
+/* Api to add booklists. Which are just lists of books */
+app.post("/api/v1/add-booklist", async (req, res) => {
+    if (req.books) {
+      let new_booklist = new bookList();
+    }
+})
+
 /* Api to add book */
-app.post("/api/v1/add-book", upload.any(), (req, res) => {
+app.post("/api/v1/add-book", upload.any(), async (req, res) => {
   try {
     if (req.files && req.body && req.body.name && req.body.desc && req.body.price &&
       req.body.discount) {
@@ -139,19 +158,7 @@ app.post("/api/v1/add-book", upload.any(), (req, res) => {
       new_book.price = req.body.price;
       new_book.image = req.files[0].filename;
       new_book.notes = req.notes.id;
-      new_book.save((err, data) => {
-        if (err) {
-          res.status(400).json({
-            errorMessage: err,
-            status: false
-          });
-        } else {
-          res.status(200).json({
-            status: true,
-            title: 'book Added successfully.'
-          });
-        }
-      });
+      await new_book.save();
 
     } else {
       res.status(400).json({
