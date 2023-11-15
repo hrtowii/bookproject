@@ -11,7 +11,7 @@ import user from "./model/User.js";
 import path from "path";
 
 // readup on: callback fns, asynchronous js (promises, async/await etc) because im bad at them
-mongoose
+mongoose // start: mongod --dbpath ~/bookproject/bookdb/ --logpath ~/bookproject/bookdb/mongo.log --fork
   .connect("mongodb://localhost/bookdb") // create here https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database#setting-up-mongodb-on-macos
   .then(() => {
     console.log("MONGO CONNECTION OPEN!!!");
