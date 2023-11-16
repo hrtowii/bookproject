@@ -2,7 +2,7 @@ import express from "express";
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {v4 as uuid} from 'uuid';
+// import {v4 as uuid} from 'uuid';
 // import fs from 'fs';
 // import multer from 'multer';
 import mongoose from "mongoose";
@@ -212,8 +212,9 @@ app.post("/api/v1/add-book", async (req, res) => {
 /* Api to update book */
 app.post("/api/v1/update-book", async (req, res) => {
   try {
-    if (req.body && bookfields.every(field => req.body[field])) {
+    if (req.body && req.body.id) { // the fields are optional because not necessary to update evrything
       const updateBook = await book.findById(req.body.id)
+      // const updateBook = await book.find()
       if (!updateBook) {
         res.status(400).json({
           errorMessage: 'No book found!',
@@ -234,7 +235,8 @@ app.post("/api/v1/update-book", async (req, res) => {
           await updateBook.save()
           res.status(200).json({
             status: true,
-            title: 'book updated.'
+            title: 'book updated',
+            book: updateBook
           });
         } catch (e) {
           res.status(400).json({
