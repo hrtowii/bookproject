@@ -21,28 +21,28 @@ mongoose // start: mongod --dbpath ~/bookproject/bookdb/ --logpath ~/bookproject
     console.log(err);
   });
 
-var dir = './uploads';
-var upload = multer({
-  storage: multer.diskStorage({
+// var dir = './uploads';
+// var upload = multer({
+//   storage: multer.diskStorage({
 
-    destination: function (req, file, callback) {
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-      }
-      callback(null, './uploads');
-    },
-    filename: function (req, file, callback) { callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); }
+//     destination: function (req, file, callback) {
+//       if (!fs.existsSync(dir)) {
+//         fs.mkdirSync(dir);
+//       }
+//       callback(null, './uploads');
+//     },
+//     filename: function (req, file, callback) { callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); }
 
-  }),
+//   }),
 
-  fileFilter: function (req, file, callback) {
-    var ext = path.extname(file.originalname)
-    if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
-      return callback(/*res.end('Only images are allowed')*/ null, false)
-    }
-    callback(null, true)
-  }
-});
+//   fileFilter: function (req, file, callback) {
+//     var ext = path.extname(file.originalname)
+//     if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+//       return callback(/*res.end('Only images are allowed')*/ null, false)
+//     }
+//     callback(null, true)
+//   }
+// });
 
 const port = process.env.PORT || 3000;
 
@@ -176,12 +176,19 @@ app.post("/api/v1/add-book", async (req, res) => {
       new_book.price = req.body.price;
       new_book.notes = req.body.notes;
       new_book.rating = req.body.rating;
-      await new_book.save();
-      res.status(200).json({
-        status: true,
-        title: 'book added.',
-        book: new_book
-      });
+      try {
+        await new_book.save();
+        res.status(200).json({
+          status: true,
+          title: 'book added.',
+          book: new_book
+        });
+      } catch (e) {
+        res.status(400).json({
+          errorMessage: 'Something went wrong!' + " " + e,
+          status: false
+        });
+      }
     } else {
       res.status(400).json({
         errorMessage: 'Add proper parameter first!',
@@ -201,7 +208,7 @@ app.post("/api/v1/update-book", async (req, res) => {
   try {
     if (req.body && req.body.name && req.body.description && req.body.price && req.body.notes && req.body.author && req.body.rating) {
 
-      book.findById(req.body.id, async (err, new_book) => {
+      const bookToUpdate = await book.findById(req.body.id, async (err, new_book) => {
 
         if (req.body.name) {
           new_book.name = req.body.name;
@@ -222,14 +229,15 @@ app.post("/api/v1/update-book", async (req, res) => {
           new_book.notes = req.body.rating;
         }
 
-        if (await new_book.save()) {
+        try {
+          await new_book.save()
           res.status(200).json({
             status: true,
             title: 'book updated.'
           });
-        } else {
+        } catch (e) {
           res.status(400).json({
-            errorMessage: err,
+            errorMessage: "error!" + " " + e,
             status: false
           });
         };
