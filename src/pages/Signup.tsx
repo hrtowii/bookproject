@@ -12,6 +12,7 @@ function Signup() {
     <div className='content'>
       <h1>Sign up</h1>
       <h2>{data?.message}</h2>
+      
     </div>
   )
 }

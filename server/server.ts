@@ -93,7 +93,7 @@ app.post("/api/v1/register", async (req, res) => {
       }
     } else {
       res.status(400).json({
-        errorMessage: 'Add proper parameter first!',
+        errorMessage: 'Either password or username field missing',
         status: false
       });
     }
@@ -128,7 +128,7 @@ app.post("/api/v1/login", async (req, res) => {
       }
     } else {
       res.status(400).json({
-        errorMessage: 'Add proper parameter first!',
+        errorMessage: 'Either password or username field missing',
         status: false
       });
     }
@@ -160,7 +160,7 @@ function checkUserAndGenerateToken(data, req, res) {
 
 /* Api to add booklists. Which are just lists of books */
 app.post("/api/v1/add-booklist", async (req, res) => {
-  if (req.books) {
+  if (req.body.books) {
     let new_booklist = new bookList();
   }
 })
@@ -170,17 +170,10 @@ const bookfields = ["name", "description", "price", "notes", "author", "rating"]
 app.post("/api/v1/add-book", async (req, res) => {
   try {
     if (req.body && bookfields.every(field => req.body[field])) {
-
       let new_book = new book();
       bookfields.forEach((field) => {
         new_book[field] = req.body[field];
       })
-      // new_book.name = req.body.name;
-      // new_book.author = req.body.author;
-      // new_book.description = req.body.description;
-      // new_book.price = req.body.price;
-      // new_book.notes = req.body.notes;
-      // new_book.rating = req.body.rating;
       try {
         await new_book.save();
         res.status(200).json({
@@ -196,7 +189,7 @@ app.post("/api/v1/add-book", async (req, res) => {
       }
     } else {
       res.status(400).json({
-        errorMessage: 'Add proper parameter first!',
+        errorMessage: 'Missing bookfields. Was given ' + req.body + ", but need " + bookfields,
         status: false
       });
     }
@@ -223,13 +216,6 @@ app.post("/api/v1/update-book", async (req, res) => {
         bookfields.forEach((field) => {
           updateBook[field] = req.body[field] || updateBook[field];
         })
-        // new_book.name = req.body.name || new_book.name;
-        // new_book.author = req.body.author || new_book.author;
-        // new_book.description = req.body.description || new_book.description;
-        // new_book.price = req.body.price || new_book.price;
-        // new_book.notes = req.body.notes || new_book.notes;
-        // new_book.notes = req.body.rating || new_book.rating;
-
         try {
           await updateBook.save()
           res.status(200).json({
@@ -247,7 +233,7 @@ app.post("/api/v1/update-book", async (req, res) => {
 
     } else {
       res.status(400).json({
-        errorMessage: 'Add proper parameter first!',
+        errorMessage: 'missing parameters. book id required.',
         status: false
       });
     }
@@ -259,25 +245,26 @@ app.post("/api/v1/update-book", async (req, res) => {
   }
 });
 
-/* Api to delete book by id */
+/* Api to delete book by id or all a book's name */
 app.post("/api/v1/delete-book", async (req, res) => {
   try {
-    if (req.body && req.body.id) {
+    if (req.body && req.body.id || req.body && req.body.name) {
       try {
         await book.deleteOne({ id: req.body.id })
+        await book.deleteOne({ name: req.body.name })
         res.status(200).json({
           status: true,
           title: 'book deleted.'
         });
       } catch (err) {
-          res.status(400).json({
-            errorMessage: err,
-            status: false
-          });
-        }
+        res.status(400).json({
+          errorMessage: err,
+          status: false
+        });
+      }
     } else {
       res.status(400).json({
-        errorMessage: 'Add proper parameter first!',
+        errorMessage: 'missing parameters. book id required',
         status: false
       });
     }
@@ -289,59 +276,52 @@ app.post("/api/v1/delete-book", async (req, res) => {
   }
 });
 
-/*Api to get and search book with pagination and search by name*/
-app.get("/api/v1/get-book", (req, res) => {
+/*Api to get and search book with id OR name.*/
+app.get("/api/v1/get-book", async (req, res) => {
   try {
-    var query = {};
-    query["$and"] = [];
-    query["$and"].push({
-      is_delete: false,
-      user_id: req.user.id
-    });
-    if (req.query && req.query.search) {
-      query["$and"].push({
-        name: { $regex: req.query.search }
+    if (
+      (req.body && req.body.id) ||
+      (req.body && req.body.name))
+      {
+      if (req.body.id) {
+        try {
+          const foundBook = await book.findById(req.body.id);
+          res.status(200).json({
+            status: true,
+            book: foundBook
+          });
+        } catch (e) {
+          res.status(400).json({
+            errorMessage: 'Something went wrong!' + " " + e,
+            status: false
+          });
+        }
+      } else {
+        try {
+          const foundBook = await book.findOne({name: req.body.name})
+          res.status(200).json({
+            status: true,
+            book: foundBook
+          });
+        } catch (e) {
+          res.status(400).json({
+            errorMessage: 'Something went wrong!' + " " + e,
+            status: false
+          });
+        }
+      }
+    } else {
+      res.status(400).json({
+        errorMessage: 'missing parameters. book id OR every book field required',
+        status: false
       });
     }
-    var perPage = 5;
-    var page = req.query.page || 1;
-    book.find(query, { date: 1, name: 1, id: 1, desc: 1, price: 1, discount: 1, image: 1 })
-      .skip((perPage * page) - perPage).limit(perPage)
-      .then((data) => {
-        book.find(query).count()
-          .then((count) => {
-
-            if (data && data.length > 0) {
-              res.status(200).json({
-                status: true,
-                title: 'book retrieved.',
-                books: data,
-                current_page: page,
-                total: count,
-                pages: Math.ceil(count / perPage),
-              });
-            } else {
-              res.status(400).json({
-                errorMessage: 'There is no book!',
-                status: false
-              });
-            }
-
-          });
-
-      }).catch(err => {
-        res.status(400).json({
-          errorMessage: err.message || err,
-          status: false
-        });
-      });
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!',
+      errorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
-
 });
 
 process.on('uncaughtException', function (err) {

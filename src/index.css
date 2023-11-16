@@ -67,6 +67,10 @@ a:hover {
   gap: 1rem;
 }
 
+button {
+  color: var(--accent);
+  max-width: 50vw;
+}
 @media (prefers-color-scheme: light) {
   :root {
     --text: hsl(15, 40%, 2%);
