@@ -6,7 +6,7 @@ import fs from 'fs';
 import multer from 'multer';
 import mongoose from "mongoose";
 import bodyParser from 'body-parser';
-import {bookList, book} from './model/BookList.js';
+import { bookList, book } from './model/BookList.js';
 import user from "./model/User.js";
 import path from "path";
 
@@ -59,44 +59,6 @@ app.get("/api/v1/hello", (req, res) => {
   // res.send({ "message": "This is a .send" })
 });
 
-/* login api */
-app.post("/api/v1/login", (req, res) => {
-  try {
-    if (req.body && req.body.username && req.body.password) {
-      user.find({ username: req.body.username }, (err, data) => {
-        if (data.length > 0) {
-
-          if (bcrypt.compareSync(data[0].password, req.body.password)) {
-            checkUserAndGenerateToken(data[0], req, res);
-          } else {
-
-            res.status(400).json({
-              errorMessage: 'Username or password is incorrect!',
-              status: false
-            });
-          }
-
-        } else {
-          res.status(400).json({
-            errorMessage: 'Username or password is incorrect!',
-            status: false
-          });
-        }
-      })
-    } else {
-      res.status(400).json({
-        errorMessage: 'Add proper parameter first!',
-        status: false
-      });
-    }
-  } catch (e) {
-    res.status(400).json({
-      errorMessage: 'Something went wrong!',
-      status: false
-    });
-  }
-
-});
 
 /* register api */
 app.post("/api/v1/register", async (req, res) => {
@@ -105,20 +67,28 @@ app.post("/api/v1/register", async (req, res) => {
 
       const data = await user.find({ username: req.body.username });
 
-        if (data.length == 0) {
+      const saltRounds = 10;
 
-          let User = new user({
-            username: req.body.username,
-            password: req.body.password
-          });
-          await User.save();
+      if (data.length == 0) {
 
-        } else {
-          res.status(400).json({
-            errorMessage: `UserName ${req.body.username} Already Exist!`,
-            status: false
-          });
-        }
+        const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+
+        let User = new user({
+          username: req.body.username,
+          password: hashedPassword
+        });
+        // console.log(User.username + " " + User.password)
+        await User.save();
+        res.status(200).json({
+          message: 'Register Successfully.',
+          status: true
+        });
+      } else {
+        res.status(400).json({
+          errorMessage: `Username ${req.body.username} already exists!`,
+          status: false
+        });
+      }
     } else {
       res.status(400).json({
         errorMessage: 'Add proper parameter first!',
@@ -133,6 +103,42 @@ app.post("/api/v1/register", async (req, res) => {
   }
 });
 
+/* login api */
+app.post("/api/v1/login", async (req, res) => {
+  try {
+    if (req.body && req.body.username && req.body.password) {
+      const data = await user.find({ username: req.body.username });
+      if (data.length > 0) {
+        console.log(data[0].password + " " + req.body.password) // hash the body password and compare to the already hashed password in the db. so hash the pw on registration
+        if (bcrypt.compare(data[0].password, req.body.password)) {
+          checkUserAndGenerateToken(data[0], req, res);
+        } else {
+          res.status(400).json({
+            errorMessage: 'Username or password is incorrect!',
+            status: false
+          });
+        }
+      } else {
+        res.status(400).json({
+          errorMessage: 'Username doesn\'t exist',
+          status: false
+        });
+      }
+    } else {
+      res.status(400).json({
+        errorMessage: 'Add proper parameter first!',
+        status: false
+      });
+    }
+  } catch (e) {
+    res.status(400).json({
+      errorMessage: 'Something went wrong! ' + e,
+      status: false
+    });
+  }
+
+});
+
 function checkUserAndGenerateToken(data, req, res) {
   jwt.sign({ user: data.username, id: data._id }, 'shhhhh11111', { expiresIn: '1d' }, (err, token) => {
     if (err) {
@@ -141,7 +147,7 @@ function checkUserAndGenerateToken(data, req, res) {
         errorMessage: err,
       });
     } else {
-      res.json({
+      res.status(200).json({
         message: 'Login Successfully.',
         token: token,
         status: true
@@ -152,9 +158,9 @@ function checkUserAndGenerateToken(data, req, res) {
 
 /* Api to add booklists. Which are just lists of books */
 app.post("/api/v1/add-booklist", async (req, res) => {
-    if (req.books) {
-      let new_booklist = new bookList();
-    }
+  if (req.books) {
+    let new_booklist = new bookList();
+  }
 })
 
 /* Api to add book */
@@ -302,7 +308,7 @@ app.get("/api/v1/get-book", (req, res) => {
             if (data && data.length > 0) {
               res.status(200).json({
                 status: true,
-                title: 'book retrived.',
+                title: 'book retrieved.',
                 books: data,
                 current_page: page,
                 total: count,
@@ -334,7 +340,7 @@ app.get("/api/v1/get-book", (req, res) => {
 
 process.on('uncaughtException', function (err) {
   console.log(err);
-}); 
+});
 
 app.listen(port, () => {
   console.log("Server listening on port", port);
