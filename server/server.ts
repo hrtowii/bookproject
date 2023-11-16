@@ -2,13 +2,14 @@ import express from "express";
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import multer from 'multer';
+import uuid from 'uuid';
+// import fs from 'fs';
+// import multer from 'multer';
 import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import { bookList, book } from './model/BookList.js';
 import user from "./model/User.js";
-import path from "path";
+// import path from "path";
 
 // readup on: callback fns, asynchronous js (promises, async/await etc) because im bad at them
 mongoose // start: mongod --dbpath ~/bookproject/bookdb/ --logpath ~/bookproject/bookdb/mongo.log --fork
@@ -74,6 +75,7 @@ app.post("/api/v1/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
         let User = new user({
+          id: uuid.v4(),
           username: req.body.username,
           password: hashedPassword
         });
@@ -165,17 +167,21 @@ app.post("/api/v1/add-booklist", async (req, res) => {
 })
 
 /* Api to add book */
+const bookfields = ["name", "description", "price", "notes", "author", "rating"];
 app.post("/api/v1/add-book", async (req, res) => {
   try {
-    if (req.body && req.body.name && req.body.description && req.body.price && req.body.notes && req.body.author, req.body.rating) {
+    if (req.body && bookfields.every(field => req.body[field])) {
 
       let new_book = new book();
-      new_book.name = req.body.name;
-      new_book.author = req.body.author;
-      new_book.description = req.body.description;
-      new_book.price = req.body.price;
-      new_book.notes = req.body.notes;
-      new_book.rating = req.body.rating;
+      bookfields.forEach((field) => {
+        new_book[field] = req.body[field];
+      })
+      // new_book.name = req.body.name;
+      // new_book.author = req.body.author;
+      // new_book.description = req.body.description;
+      // new_book.price = req.body.price;
+      // new_book.notes = req.body.notes;
+      // new_book.rating = req.body.rating;
       try {
         await new_book.save();
         res.status(200).json({
@@ -206,31 +212,26 @@ app.post("/api/v1/add-book", async (req, res) => {
 /* Api to update book */
 app.post("/api/v1/update-book", async (req, res) => {
   try {
-    if (req.body && req.body.name && req.body.description && req.body.price && req.body.notes && req.body.author && req.body.rating) {
-
-      const bookToUpdate = await book.findById(req.body.id, async (err, new_book) => {
-
-        if (req.body.name) {
-          new_book.name = req.body.name;
-        }
-        if (req.body.author) {
-          new_book.author = req.body.author;
-        }
-        if (req.body.description) {
-          new_book.description = req.body.description;
-        }
-        if (req.body.price) {
-          new_book.price = req.body.price;
-        }
-        if (req.body.notes) {
-          new_book.notes = req.body.notes;
-        }
-        if (req.body.rating) {
-          new_book.notes = req.body.rating;
-        }
+    if (req.body && bookfields.every(field => req.body[field])) {
+      const updateBook = await book.findById(req.body.id)
+      if (!updateBook) {
+        res.status(400).json({
+          errorMessage: 'No book found!',
+          status: false
+        });
+      } else {
+        bookfields.forEach((field) => {
+          updateBook[field] = req.body[field] || updateBook[field];
+        })
+        // new_book.name = req.body.name || new_book.name;
+        // new_book.author = req.body.author || new_book.author;
+        // new_book.description = req.body.description || new_book.description;
+        // new_book.price = req.body.price || new_book.price;
+        // new_book.notes = req.body.notes || new_book.notes;
+        // new_book.notes = req.body.rating || new_book.rating;
 
         try {
-          await new_book.save()
+          await updateBook.save()
           res.status(200).json({
             status: true,
             title: 'book updated.'
@@ -241,7 +242,7 @@ app.post("/api/v1/update-book", async (req, res) => {
             status: false
           });
         };
-      });
+      }
 
     } else {
       res.status(400).json({
@@ -251,7 +252,7 @@ app.post("/api/v1/update-book", async (req, res) => {
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!',
+      errorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }

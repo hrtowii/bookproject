@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 const bookSchema = new mongoose.Schema({
+    id: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
     author: { type: String, required: true },
@@ -10,6 +11,7 @@ const bookSchema = new mongoose.Schema({
 });
 
 export const bookListSchema = new mongoose.Schema({
+    id: { type: String, required: true },
     name: { type: String, required: true },
     books: [bookSchema]
 });
