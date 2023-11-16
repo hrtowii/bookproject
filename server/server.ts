@@ -2,7 +2,7 @@ import express from "express";
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import uuid from 'uuid';
+import {v4 as uuid} from 'uuid';
 // import fs from 'fs';
 // import multer from 'multer';
 import mongoose from "mongoose";
