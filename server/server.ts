@@ -75,7 +75,6 @@ app.post("/api/v1/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
         let User = new user({
-          id: uuid.v4(),
           username: req.body.username,
           password: hashedPassword
         });
@@ -209,10 +208,10 @@ app.post("/api/v1/add-book", async (req, res) => {
   }
 });
 
-/* Api to update book */
+/* Api to update book by id */
 app.post("/api/v1/update-book", async (req, res) => {
   try {
-    if (req.body && req.body.id) { // the fields are optional because not necessary to update evrything
+    if (req.body && req.body.id) { // the fields are optional
       const updateBook = await book.findById(req.body.id)
       // const updateBook = await book.find()
       if (!updateBook) {
@@ -260,23 +259,22 @@ app.post("/api/v1/update-book", async (req, res) => {
   }
 });
 
-/* Api to delete book */
-app.post("/api/v1/delete-book", (req, res) => {
+/* Api to delete book by id */
+app.post("/api/v1/delete-book", async (req, res) => {
   try {
-    if (req.body && req.body.name) {
-      book.deleteOne(req.body.name, (err, data) => {
-        if (data.is_delete) {
-          res.status(200).json({
-            status: true,
-            title: 'book deleted.'
-          });
-        } else {
+    if (req.body && req.body.id) {
+      try {
+        await book.deleteOne({ id: req.body.id })
+        res.status(200).json({
+          status: true,
+          title: 'book deleted.'
+        });
+      } catch (err) {
           res.status(400).json({
             errorMessage: err,
             status: false
           });
         }
-      });
     } else {
       res.status(400).json({
         errorMessage: 'Add proper parameter first!',
@@ -285,7 +283,7 @@ app.post("/api/v1/delete-book", (req, res) => {
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!',
+      errorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
