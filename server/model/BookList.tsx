@@ -6,8 +6,7 @@ const bookSchema = new mongoose.Schema({
     notes: { type: String, required: true },
     rating: { type: Number, required: true },
     price: { type: Number, required: true },
-    image: { type: String, required: true },
-    is_delete: { type: Boolean, default: false },
+    image: { type: String, required: false },
 });
 
 export const bookListSchema = new mongoose.Schema({

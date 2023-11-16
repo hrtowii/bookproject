@@ -55,7 +55,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.get("/api/v1/hello", (req, res) => {
   res.set('Access-Control-Allow-Origin', '*');
-  res.json({ message: "Hello, world!" });
+  res.json({ message: "Hello, world! this is a .json" });
   // res.send({ "message": "This is a .send" })
 });
 
@@ -77,6 +77,7 @@ app.post("/api/v1/register", async (req, res) => {
           username: req.body.username,
           password: hashedPassword
         });
+
         // console.log(User.username + " " + User.password)
         await User.save();
         res.status(200).json({
@@ -109,7 +110,7 @@ app.post("/api/v1/login", async (req, res) => {
     if (req.body && req.body.username && req.body.password) {
       const data = await user.find({ username: req.body.username });
       if (data.length > 0) {
-        console.log(data[0].password + " " + req.body.password) // hash the body password and compare to the already hashed password in the db. so hash the pw on registration
+        // console.log(data[0].password + " " + req.body.password) // hash the body password and compare to the already hashed password in the db. so hash the pw on registration
         if (bcrypt.compare(data[0].password, req.body.password)) {
           checkUserAndGenerateToken(data[0], req, res);
         } else {
@@ -148,7 +149,7 @@ function checkUserAndGenerateToken(data, req, res) {
       });
     } else {
       res.status(200).json({
-        message: 'Login Successfully.',
+        message: 'logged in successfully.',
         token: token,
         status: true
       });
@@ -164,20 +165,23 @@ app.post("/api/v1/add-booklist", async (req, res) => {
 })
 
 /* Api to add book */
-app.post("/api/v1/add-book", upload.any(), async (req, res) => {
+app.post("/api/v1/add-book", async (req, res) => {
   try {
-    if (req.files && req.body && req.body.name && req.body.desc && req.body.price &&
-      req.body.discount) {
+    if (req.body && req.body.name && req.body.description && req.body.price && req.body.notes && req.body.author, req.body.rating) {
 
       let new_book = new book();
       new_book.name = req.body.name;
       new_book.author = req.body.author;
-      new_book.description = req.body.desc;
+      new_book.description = req.body.description;
       new_book.price = req.body.price;
-      new_book.image = req.files[0].filename;
-      new_book.notes = req.notes.id;
+      new_book.notes = req.body.notes;
+      new_book.rating = req.body.rating;
       await new_book.save();
-
+      res.status(200).json({
+        status: true,
+        title: 'book added.',
+        book: new_book
+      });
     } else {
       res.status(400).json({
         errorMessage: 'Add proper parameter first!',
@@ -186,56 +190,49 @@ app.post("/api/v1/add-book", upload.any(), async (req, res) => {
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!',
+      errorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
 });
 
 /* Api to update book */
-app.post("/api/v1/update-book", upload.any(), (req, res) => {
+app.post("/api/v1/update-book", async (req, res) => {
   try {
-    if (req.files && req.body && req.body.name && req.body.desc && req.body.price &&
-      req.body.id && req.body.discount) {
+    if (req.body && req.body.name && req.body.description && req.body.price && req.body.notes && req.body.author && req.body.rating) {
 
-      book.findById(req.body.id, (err, new_book) => {
+      book.findById(req.body.id, async (err, new_book) => {
 
-        // if file already exist than remove it
-        if (req.files && req.files[0] && req.files[0].filename && new_book.image) {
-          var path = `./uploads/${new_book.image}`;
-          fs.unlinkSync(path);
-        }
-
-        if (req.files && req.files[0] && req.files[0].filename) {
-          new_book.image = req.files[0].filename;
-        }
         if (req.body.name) {
           new_book.name = req.body.name;
         }
-        if (req.body.desc) {
-          new_book.desc = req.body.desc;
+        if (req.body.author) {
+          new_book.author = req.body.author;
+        }
+        if (req.body.description) {
+          new_book.description = req.body.description;
         }
         if (req.body.price) {
           new_book.price = req.body.price;
         }
-        if (req.body.discount) {
-          new_book.discount = req.body.discount;
+        if (req.body.notes) {
+          new_book.notes = req.body.notes;
+        }
+        if (req.body.rating) {
+          new_book.notes = req.body.rating;
         }
 
-        new_book.save((err, data) => {
-          if (err) {
-            res.status(400).json({
-              errorMessage: err,
-              status: false
-            });
-          } else {
-            res.status(200).json({
-              status: true,
-              title: 'book updated.'
-            });
-          }
-        });
-
+        if (await new_book.save()) {
+          res.status(200).json({
+            status: true,
+            title: 'book updated.'
+          });
+        } else {
+          res.status(400).json({
+            errorMessage: err,
+            status: false
+          });
+        };
       });
 
     } else {
@@ -255,8 +252,8 @@ app.post("/api/v1/update-book", upload.any(), (req, res) => {
 /* Api to delete book */
 app.post("/api/v1/delete-book", (req, res) => {
   try {
-    if (req.body && req.body.id) {
-      book.findByIdAndUpdate(req.body.id, { is_delete: true }, (err, data) => {
+    if (req.body && req.body.name) {
+      book.deleteOne(req.body.name, (err, data) => {
         if (data.is_delete) {
           res.status(200).json({
             status: true,
