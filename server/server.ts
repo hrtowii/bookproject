@@ -99,7 +99,7 @@ app.post("/api/v1/register", async (req, res) => {
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!' + e,
+      errorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
