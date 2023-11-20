@@ -42,3 +42,4 @@ export async function get(url: string): Promise<any> {
     }
 }
 
+export const site = "http://localhost:3000/api/v1";

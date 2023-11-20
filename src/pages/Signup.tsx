@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react'
-import { post, get } from '../utilities'
-
-const site = "http://localhost:3000/api/v1";
+import { post, site } from '../utilities'
 
 async function ValidatePassword(password: string) {
 
@@ -20,10 +18,10 @@ async function ValidatePassword(password: string) {
 } // 1 special symbol, capital alphabet, a number
 
 
-async function HandleSignup(event: any) {
+async function HandleSignup(event: React.FormEvent<HTMLFormElement>) {
   try {
     event.preventDefault()
-    const data = new FormData(event.target);
+    const data = new FormData(event.target as HTMLFormElement);
     // Access FormData fields with `data.get(fieldName)`
     const username = data.get('username')
     const password = data.get("password") as string
@@ -45,7 +43,7 @@ function Signup() {
     <div className='content'>
       <h1>Sign up</h1>
       {/* <h2>{data?.message}</h2> */}
-      <form onSubmit={(event) => HandleSignup(event)}>
+      <form onSubmit={(event: React.FormEvent<HTMLFormElement>) => HandleSignup(event)}>
         <input type='text' name="username"></input>
         <input type='text' name="password"></input>
         <button type="submit">Signup</button>
