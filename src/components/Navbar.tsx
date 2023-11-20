@@ -16,6 +16,7 @@ function Navbar() {
     useEffect(() => {
         const username: string = Cookies.get("username")!
         const token: string = Cookies.get("token")!
+        // console.log(username, token, isLoggedIn)
         if (token) {
             setUsername(username)
             setLogin(true)

@@ -3,18 +3,21 @@ import React, { useState, useEffect, useRef } from 'react'
 import { post, site } from '../utilities'
 
 async function ValidatePassword(password: string) {
-
+  // const [passwordValidity, setPasswordValidity] = useState(false)
   var re = {
-      'capital' : /[A-Z]/,
-      'digit'   : /[0-9]/,
-      'special' : /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/,
-      'length'  : /.{8,}/,
+    'capital': /[A-Z]/,
+    'digit': /[0-9]/,
+    'special': /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/,
+    'length': /.{8,}/,
   };
 
-  return re.capital.test(password) && 
-         re.digit.test(password) &&
-         re.special.test(password) &&
-         re.length.test(password);
+  if (re.capital.test(password) &&
+    re.digit.test(password) &&
+    re.special.test(password) &&
+    re.length.test(password)) {
+    // setPasswordValidity(true)
+    return true
+  }
 } // 1 special symbol, capital alphabet, a number
 
 
@@ -25,14 +28,15 @@ async function HandleSignup(event: React.FormEvent<HTMLFormElement>) {
     // Access FormData fields with `data.get(fieldName)`
     const username = data.get('username')
     const password = data.get("password") as string
+    let passwordValidity = false
     if (await ValidatePassword(password)) {
-      const response = await post(`${site}/register`, {"username": username, "password": password})
-      if (response.status = 200) {
+      const response = await post(`${site}/register`, { "username": username, "password": password })
+      if (response.status === 200) {
+        passwordValidity = true
         return true
       }
     } else {
       console.log("invalid password!")
-      new Error("PasswordError")
     }
   } catch (e) {
     console.log(e);

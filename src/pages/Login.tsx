@@ -11,7 +11,7 @@ async function HandleLogin(event: React.FormEvent<HTMLFormElement>) {
     const password = data.get("password") as string
     const response = await post(`${site}/login`, {"username": username, "password": password})
     if (response.status = 200) {
-      const stuff = {"username": response.username, "token": response.token}
+      const stuff = {"username": response.username, "token": response.token} // im doing this stupid thing so i can add username to navbar 
       return stuff
     }
   } catch (e) {
