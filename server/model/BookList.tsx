@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const bookSchema = new mongoose.Schema({
+const BookSchema = new mongoose.Schema({
     // id: { type: String, required: false },
     name: { type: String, required: true },
     description: { type: String, required: true },
@@ -10,11 +10,11 @@ const bookSchema = new mongoose.Schema({
     image: { type: String, required: false },
 });
 
-export const bookListSchema = new mongoose.Schema({
+export const BookListSchema = new mongoose.Schema({
     id: { type: String, required: true },
     name: { type: String, required: true },
-    books: [bookSchema]
+    books: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }]
 });
 
-export const book = mongoose.model('Book', bookSchema);
-export const bookList = mongoose.model('BookList', bookListSchema);
+export const book = mongoose.model('Book', BookSchema);
+export const BookList = mongoose.model('BookList', BookListSchema);

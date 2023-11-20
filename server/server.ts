@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 // import multer from 'multer';
 import mongoose from "mongoose";
 import bodyParser from 'body-parser';
-import { bookList, book } from './model/BookList.js';
+import { BookList, book } from './model/BookList.js';
 import user from "./model/User.js";
 // import path from "path";
 
@@ -87,19 +87,19 @@ app.post("/api/v1/register", async (req, res) => {
         });
       } else {
         res.status(400).json({
-          errorMessage: `Username ${req.body.username} already exists!`,
+          ErrorMessage: `Username ${req.body.username} already exists!`,
           status: false
         });
       }
     } else {
       res.status(400).json({
-        errorMessage: 'Either password or username field missing',
+        ErrorMessage: 'Either password or username field missing',
         status: false
       });
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!' + " " + e,
+      ErrorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
@@ -116,25 +116,25 @@ app.post("/api/v1/login", async (req, res) => {
           checkUserAndGenerateToken(data[0], req, res);
         } else {
           res.status(400).json({
-            errorMessage: 'Username or password is incorrect!',
+            ErrorMessage: 'Username or password is incorrect!',
             status: false
           });
         }
       } else {
         res.status(400).json({
-          errorMessage: 'Username doesn\'t exist',
+          ErrorMessage: 'Username doesn\'t exist',
           status: false
         });
       }
     } else {
       res.status(400).json({
-        errorMessage: 'Either password or username field missing',
+        ErrorMessage: 'Either password or username field missing',
         status: false
       });
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong! ' + e,
+      ErrorMessage: 'Something went wrong! ' + e,
       status: false
     });
   }
@@ -146,7 +146,7 @@ function checkUserAndGenerateToken(data, req, res) {
     if (err) {
       res.status(400).json({
         status: false,
-        errorMessage: err,
+        ErrorMessage: err,
       });
     } else {
       res.status(200).json({
@@ -161,41 +161,41 @@ function checkUserAndGenerateToken(data, req, res) {
 /* Api to add booklists. Which are just lists of books */
 app.post("/api/v1/add-booklist", async (req, res) => {
   if (req.body.books) {
-    let new_booklist = new bookList();
+    let NewBooklist = new BookList();
   }
 })
 
 /* Api to add book */
-const bookfields = ["name", "description", "price", "notes", "author", "rating"];
+const BookFields = ["name", "description", "price", "notes", "author", "rating"];
 app.post("/api/v1/add-book", async (req, res) => {
   try {
-    if (req.body && bookfields.every(field => req.body[field])) {
-      let new_book = new book();
-      bookfields.forEach((field) => {
-        new_book[field] = req.body[field];
+    if (req.body && BookFields.every(field => req.body[field])) {
+      let NewBook = new book();
+      BookFields.forEach((field) => {
+        NewBook[field] = req.body[field];
       })
       try {
-        await new_book.save();
+        await NewBook.save();
         res.status(200).json({
           status: true,
           title: 'book added.',
-          book: new_book
+          book: NewBook
         });
       } catch (e) {
         res.status(400).json({
-          errorMessage: 'Something went wrong!' + " " + e,
+          ErrorMessage: 'Something went wrong!' + " " + e,
           status: false
         });
       }
     } else {
       res.status(400).json({
-        errorMessage: 'Missing bookfields. Was given ' + req.body + ", but need " + bookfields,
+        ErrorMessage: 'Missing BookFields. Was given ' + req.body + ", but need " + BookFields,
         status: false
       });
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!' + " " + e,
+      ErrorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
@@ -205,27 +205,27 @@ app.post("/api/v1/add-book", async (req, res) => {
 app.post("/api/v1/update-book", async (req, res) => {
   try {
     if (req.body && req.body.id) { // the fields are optional
-      const updateBook = await book.findById(req.body.id)
+      const UpdateBook = await book.findById(req.body.id)
       // const updateBook = await book.find()
-      if (!updateBook) {
+      if (!UpdateBook) {
         res.status(400).json({
-          errorMessage: 'No book found!',
+          ErrorMessage: 'No book found!',
           status: false
         });
       } else {
-        bookfields.forEach((field) => {
-          updateBook[field] = req.body[field] || updateBook[field];
+        BookFields.forEach((field) => {
+          UpdateBook[field] = req.body[field] || UpdateBook[field];
         })
         try {
-          await updateBook.save()
+          await UpdateBook.save()
           res.status(200).json({
             status: true,
             title: 'book updated',
-            book: updateBook
+            book: UpdateBook
           });
         } catch (e) {
           res.status(400).json({
-            errorMessage: "error!" + " " + e,
+            ErrorMessage: "error!" + " " + e,
             status: false
           });
         };
@@ -233,13 +233,13 @@ app.post("/api/v1/update-book", async (req, res) => {
 
     } else {
       res.status(400).json({
-        errorMessage: 'missing parameters. book id required.',
+        ErrorMessage: 'missing parameters. book id required.',
         status: false
       });
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!' + " " + e,
+      ErrorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
@@ -258,19 +258,19 @@ app.post("/api/v1/delete-book", async (req, res) => {
         });
       } catch (err) {
         res.status(400).json({
-          errorMessage: err,
+          ErrorMessage: err,
           status: false
         });
       }
     } else {
       res.status(400).json({
-        errorMessage: 'missing parameters. book id required',
+        ErrorMessage: 'missing parameters. book id required',
         status: false
       });
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!' + " " + e,
+      ErrorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
@@ -292,7 +292,7 @@ app.get("/api/v1/get-book", async (req, res) => {
           });
         } catch (e) {
           res.status(400).json({
-            errorMessage: 'Something went wrong!' + " " + e,
+            ErrorMessage: 'Something went wrong!' + " " + e,
             status: false
           });
         }
@@ -305,20 +305,20 @@ app.get("/api/v1/get-book", async (req, res) => {
           });
         } catch (e) {
           res.status(400).json({
-            errorMessage: 'Something went wrong!' + " " + e,
+            ErrorMessage: 'Something went wrong!' + " " + e,
             status: false
           });
         }
       }
     } else {
       res.status(400).json({
-        errorMessage: 'missing parameters. book id OR every book field required',
+        ErrorMessage: 'missing parameters. book id OR every book field required',
         status: false
       });
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: 'Something went wrong!' + " " + e,
+      ErrorMessage: 'Something went wrong!' + " " + e,
       status: false
     });
   }
