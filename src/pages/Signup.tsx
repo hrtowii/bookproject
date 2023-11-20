@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Form } from 'react-router-dom'
-
+import { postData } from '../utilities';
 function validatePassword(password: string) {
   var re = {
       'capital' : /[A-Z]/,
@@ -15,11 +15,15 @@ function validatePassword(password: string) {
          re.length.test(password);
 }
 
-function 
+postData("https://example.com/answer", { answer: 42 })
+.then((data) => {
+  console.log(data); // JSON data parsed by `data.json()` call
+});
+
 
 function Signup() {
-  const [data, setData] = useState({message: "Loading..."});
   const site = "http://localhost:3000";
+  const [data, setData] = useState({message: "Loading..."});
   useEffect(() => { // on page load fetch data from api
     fetch(site+"/api/v1/hello", {mode: 'cors'})
       .then((res) => res.json())
@@ -29,11 +33,11 @@ function Signup() {
     <div className='content'>
       <h1>Sign up</h1>
       <h2>{data?.message}</h2>
-      <Form method="post" action="/api/v1/register">
+      <form onSubmit={e => e.preventDefault()} method="post" action={`${site}/api/v1/register`}>
         <input type='text' name="username"></input>
         <input type='text' name="password"></input>
         <button type="submit">Signup</button>
-      </Form>
+      </form>
     </div>
   )
 }
