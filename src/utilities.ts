@@ -9,9 +9,9 @@ export async function post(url: string, data: object): Promise<any> {
             body: JSON.stringify(data),
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        // if (!response.ok) {
+        //     throw new Error(`HTTP error! Status: ${response.status}`);
+        // }
 
         const jsonResponse = await response.json();
         return jsonResponse;
