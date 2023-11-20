@@ -52,22 +52,30 @@ function Signup() {
     <div className='content'>
       <h1>Sign up</h1>
       {/* <h2>{data?.message}</h2> */}
-      <form onSubmit={(event: React.FormEvent<HTMLFormElement>) => HandleSignup(event)}>
-        <input type='text' name="username"></input>
-        <input type='text' name="password"></input>
-        <button type="submit">Signup</button>
-      </form>
-      {passwordValidity.status === 'error' && (
-        <div className='registerError'>
-          <h5 style={{"margin": 0}}>Invalid password!</h5>
-          <p>{passwordValidity.message}</p>
-        </div>
-      )}
-      {passwordValidity.status === 'success' && (
-        <div className='registerSuccess'>
-          <h5 style={{"margin": 0}}>Successfully registered.</h5>
-        </div> // refactor to component later and pass in as propr
-      )}
+      <div className='inputwrapper'>
+        <form onSubmit={(event: React.FormEvent<HTMLFormElement>) => HandleSignup(event)}>
+          <div className='input'>
+            <p>Username</p>
+            <input placeholder="Username" type='text' name="username"></input>
+          </div>
+          <div className='input'>
+            <p>Password</p>
+            <input placeholder="Password" type='text' name="password"></input>
+          </div>
+          <button type="submit"><h5 style={{"margin": 0}}>Sign up</h5></button>
+        </form>
+        {passwordValidity.status === 'error' && (
+          <div className='registerError'>
+            <h5 style={{"margin": 0}}>Invalid password!</h5>
+            <p>{passwordValidity.message}</p>
+          </div>
+        )}
+        {passwordValidity.status === 'success' && (
+          <div className='registerSuccess'>
+            <h5 style={{"margin": 0}}>Successfully registered.</h5>
+          </div> // refactor to component later and pass in as propr
+        )}
+      </div>
     </div>
   )
 }

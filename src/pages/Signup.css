@@ -16,6 +16,44 @@
     background-color: green;
     border-color: white;
     border-width: thick;
+    border-style: solid;
     border-radius: 12px;
     max-width: 250px;
+}
+
+.inputwrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form button {
+    width: 10%;
+}
+input[type=text] {
+    color: var(--text);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    margin-block: 10px;
+    padding: 13px;
+    background-color: var(--lighterbackground);
+}
+
+input::placeholder {
+    color: var(--accent);
+}
+input:focus {
+    border-color: var(--accent);
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input p {
+    font-size: 1.5rem;
+    margin: 0;
 }
