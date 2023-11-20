@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect, useRef } from 'react'
 import { post, get } from '../utilities'
 
 const site = "http://localhost:3000/api/v1";
 
 async function ValidatePassword(password: string) {
+
   var re = {
       'capital' : /[A-Z]/,
       'digit'   : /[0-9]/,
@@ -16,6 +18,7 @@ async function ValidatePassword(password: string) {
          re.special.test(password) &&
          re.length.test(password);
 } // 1 special symbol, capital alphabet, a number
+
 
 async function HandleSignup(event: any) {
   try {
@@ -38,12 +41,6 @@ async function HandleSignup(event: any) {
   }
 }
 function Signup() {
-  // const [data, setData] = useState({message: "Loading..."});
-  // useEffect(() => { // on page load fetch data from api
-  //   fetch(site+"/hello", {mode: 'cors'})
-  //     .then((res) => res.json())
-  //     .then((data) => setData(data))
-  // }, [])
   return (
     <div className='content'>
       <h1>Sign up</h1>

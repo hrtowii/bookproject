@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bunx --bun vite",
+    "dev": "bunx vite",
     "server": "bunx tsx server/server.ts",
-    "build": "bunx --bun tsc && bunx --bun vite build",
+    "build": "bunx --bun tsc && bunx vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "bunx --bun vite preview"
+    "preview": "bunx vite preview"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
