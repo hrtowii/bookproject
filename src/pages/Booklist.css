@@ -1,7 +1,9 @@
 .leftside, .rightside { /*media queries/responsiveness is in index.css*/
     display: flex;
     flex-direction: column;
-    width: 50vw;
+    width: 43.75vw;
+    height: 100vh;
+    overflow: scroll;
 }
 
 .booklistwrapper {
