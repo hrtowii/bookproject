@@ -10,6 +10,7 @@ interface LoginStatus {
 
 function Login() {
   const [loginStatus, setLoginStatus] = useState<LoginStatus>({status: null})
+  
   async function HandleLogin(event: React.FormEvent<HTMLFormElement>) {
     try {
       event.preventDefault()

@@ -24,6 +24,7 @@ async function ValidatePassword(password: string) {
 
 function Signup() {
   const [passwordValidity, setPasswordValidity] = useState<PasswordValidity>({ status: null })
+  
   async function HandleSignup(event: React.FormEvent<HTMLFormElement>) {
     try {
       event.preventDefault()
