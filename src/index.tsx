@@ -11,7 +11,7 @@ import Navbar from './components/Navbar.tsx'
 import ErrorPage from './pages/error-page.tsx';
 import Signup from './pages/Signup.tsx'
 import Login from './pages/Login.tsx'
-import TestComponent from './test.tsx'
+import Booklist from './pages/Booklist.tsx'
 
 import './index.css'
 
@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     element:
     <>
       <Navbar />
-      <TestComponent />
+      <Booklist />
     </>,
     errorElement: <ErrorPage />,
   },

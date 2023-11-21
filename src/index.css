@@ -125,7 +125,7 @@ button {
   .content {
     max-width:640px
   }
-  .bottompartidk {
+  .bottompartidk, .leftside, .rightside {
     flex-direction: column;
   }
   .bottompartidk div {

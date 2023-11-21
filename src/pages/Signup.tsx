@@ -60,7 +60,7 @@ function Signup() {
             </div>
             <div className='loginfield'>
               <p>Password</p>
-              <input placeholder="Password" type='text' name="password"></input>
+              <input placeholder="Password" type='password' name="password"></input>
             </div>
             <div className='bottompartidk'>
               {passwordValidity.status === 'error' && (

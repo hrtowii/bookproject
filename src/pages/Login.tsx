@@ -51,7 +51,7 @@ function Login() {
             </div>
             <div className='loginfield'>
               <p>Password</p>
-              <input placeholder="Password" type='text' name="password"></input>
+              <input placeholder="Password" type='password' name="password"></input>
             </div>
             <div className='bottompartidk'>
               {loginStatus.status === 'error' && ( // THIS IS NOT THE RESPONSE CODE. IT IS A KEY NAMED STATUS. I SPENT 1 HOUR

@@ -36,7 +36,7 @@ form button {
 form {
     width: 100%;
 }
-input[type=text] {
+input[type=text], input[type=password] {
     color: var(--text);
     border: 1px solid var(--accent);
     border-radius: 12px;
