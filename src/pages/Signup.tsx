@@ -23,7 +23,7 @@ async function ValidatePassword(password: string) {
 } // 1 special symbol, capital alphabet, a number
 
 function Signup() {
-  const [passwordValidity, setPasswordValidity] = useState<PasswordValidity>({status: null})
+  const [passwordValidity, setPasswordValidity] = useState<PasswordValidity>({ status: null })
   async function HandleSignup(event: React.FormEvent<HTMLFormElement>) {
     try {
       event.preventDefault()
@@ -34,15 +34,15 @@ function Signup() {
       if (await ValidatePassword(password)) {
         const response = await post(`${site}/register`, { "username": username, "password": password })
         if (response.status === true) {
-          setPasswordValidity({status: 'success'})
+          setPasswordValidity({ status: 'success' })
           return passwordValidity
         } else if (response.status === false) { // THIS IS NOT THE RESPONSE CODE. IT IS A KEY NAMED STATUS. I SPENT 1 HOUR
           if (response.ErrorMessage.includes("already exists!")) {
-            setPasswordValidity({status: 'error', message: "Username already exists!"})
+            setPasswordValidity({ status: 'error', message: "Username already exists!" })
           }
         }
       } else {
-        setPasswordValidity({status: 'error', message: "Password requires special symbol, a capital alphabet/number, and at least 8 characters"})
+        setPasswordValidity({ status: 'error', message: "Password requires special symbol, a capital alphabet/number, and at least 8 characters" })
       }
     } catch (e) {
       console.log(e);
@@ -50,31 +50,37 @@ function Signup() {
   }
   return (
     <div className='content'>
-      <h1>Sign up</h1>
-      {/* <h2>{data?.message}</h2> */}
-      <div className='inputwrapper'>
-        <form onSubmit={(event: React.FormEvent<HTMLFormElement>) => HandleSignup(event)}>
-          <div className='input'>
-            <p>Username</p>
-            <input placeholder="Username" type='text' name="username"></input>
-          </div>
-          <div className='input'>
-            <p>Password</p>
-            <input placeholder="Password" type='text' name="password"></input>
-          </div>
-          <button type="submit"><h5 style={{"margin": 0}}>Sign up</h5></button>
-        </form>
-        {passwordValidity.status === 'error' && (
-          <div className='registerError'>
-            <h5 style={{"margin": 0}}>Invalid password!</h5>
-            <p>{passwordValidity.message}</p>
-          </div>
-        )}
-        {passwordValidity.status === 'success' && (
-          <div className='registerSuccess'>
-            <h5 style={{"margin": 0}}>Successfully registered.</h5>
-          </div> // refactor to component later and pass in as propr
-        )}
+      <div className="signupwrapper">
+        <h1>Sign up</h1>
+        <div className='inputwrapper'>
+          <form onSubmit={(event: React.FormEvent<HTMLFormElement>) => HandleSignup(event)}>
+            <div className='loginfield'>
+              <p>Username</p>
+              <input placeholder="Username" type='text' name="username"></input>
+            </div>
+            <div className='loginfield'>
+              <p>Password</p>
+              <input placeholder="Password" type='text' name="password"></input>
+            </div>
+            <div className='bottompartidk'>
+              {passwordValidity.status === 'error' && (
+                <div className='registerError'>
+                  <p>{passwordValidity.message}</p>
+                </div>
+              )}
+              {passwordValidity.status === 'success' && (
+                <div className='registerSuccess'>
+                  <p>Successfully registered.</p>
+                </div>
+              )}
+              {passwordValidity.status === null && (
+                <div>
+                </div> // i need an empty div to push the signup to the right
+              )}
+              <button type="submit"><h5 style={{ "margin": 0 }}>Sign up</h5></button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )

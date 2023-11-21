@@ -121,18 +121,41 @@ button {
   }
 }
 
-@media screen and (min-width: 641px) and (max-width: 768px) {
-  html {font-size: 70%;} /*16px*/
+@media (max-width: 640px) {
+  .content {
+    max-width:640px
+  }
+  .bottompartidk {
+    flex-direction: column;
+  }
+  .bottompartidk div {
+    margin-bottom: 1rem;
+  }
+  .signupwrapper {
+    padding: 0;
+  }
 }
-
-@media screen and (min-width: 769px) and (max-width: 1024px) {
-  html {font-size: 80%;} /*16px*/
+@media (max-width: 768px) {
+  .content {
+    max-width:768px
+  }
 }
-
-@media screen and (min-width: 1025px) and (max-width: 1280px) {
-  html {font-size: 90%;} /*16px*/
+@media (max-width: 1024px) {
+  .content {
+    max-width:1024px
+  }
 }
-
-@media screen and (min-width: 1281px) {
-  html {font-size: 100%;} /*16px*/
+@media (max-width: 1280px) {
+  .content {
+    max-width:1280px
+  }
+}
+@media (max-width: 1536px) {
+  .content {
+    max-width:1536px
+  }
+}
+.mx-auto {
+  margin-left:auto;
+  margin-right:auto
 }

@@ -22,6 +22,9 @@ mongoose // start: mongod --dbpath ~/bookproject/bookdb/ --logpath ~/bookproject
     console.log(err);
   });
 
+// user.deleteMany({}) -> delete everything
+// book.deleteMany({})
+
 // var dir = './uploads';
 // var upload = multer({
 //   storage: multer.diskStorage({
@@ -65,24 +68,17 @@ app.get("/api/v1/hello", (req, res) => {
 app.post("/api/v1/register", async (req, res) => {
   try {
     if (req.body && req.body.username && req.body.password) {
-
       const data = await user.find({ username: req.body.username });
-
       const saltRounds = 10;
-
       if (data.length == 0) {
-
         const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-
         let User = new user({
           username: req.body.username,
           password: hashedPassword
         });
-
-        // console.log(User.username + " " + User.password)
         await User.save();
         res.status(200).json({
-          message: 'Register Successfully.',
+          message: 'Successfully registered',
           status: true
         });
       } else {
@@ -109,17 +105,25 @@ app.post("/api/v1/register", async (req, res) => {
 app.post("/api/v1/login", async (req, res) => {
   try {
     if (req.body && req.body.username && req.body.password) {
-      const data = await user.find({ username: req.body.username });
-      if (data.length > 0) {
-        // console.log(data[0].password + " " + req.body.password) // hash the body password and compare to the already hashed password in the db. so hash the pw on registration
-        if (bcrypt.compare(data[0].password, req.body.password)) {
-          checkUserAndGenerateToken(data[0], req, res);
-        } else {
-          res.status(400).json({
-            ErrorMessage: 'Username or password is incorrect!',
-            status: false
-          });
-        }
+      const userData = await user.find({ username: req.body.username });
+      if (userData.length > 0) {
+        const hashedPassword = userData[0].password;
+        bcrypt.compare(req.body.password, hashedPassword, (err, success) => {
+          if (err) {
+            return res.status(400).json({
+              ErrorMessage: err,
+              status: false
+            });
+          }
+          if (success) {
+            checkUserAndGenerateToken(userData[0], req, res);
+          } else {
+            res.status(400).json({
+              ErrorMessage: 'Username or password is incorrect!',
+              status: false
+            });
+          }
+        });
       } else {
         res.status(400).json({
           ErrorMessage: 'Username doesn\'t exist',
@@ -138,8 +142,8 @@ app.post("/api/v1/login", async (req, res) => {
       status: false
     });
   }
-
 });
+
 
 function checkUserAndGenerateToken(data, req, res) {
   jwt.sign({ user: data.username, id: data._id }, 'shhhhh11111', { expiresIn: '1d' }, (err, token) => {

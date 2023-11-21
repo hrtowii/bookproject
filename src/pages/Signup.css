@@ -1,34 +1,40 @@
 .registerError {
-    display: flex;
-    flex-direction: column;
-    padding: 12px;
+    padding: 5px 10px;
     background-color: red;
-    border-color: white;
-    border-width: thick;
     border-radius: 12px;
-    max-width: 250px;
+    max-width: 355px;
 }
 
 .registerSuccess {
-    display: flex;
-    flex-direction: column;
-    padding: 12px;
+    padding: 5px 10px;
     background-color: green;
-    border-color: white;
-    border-width: thick;
-    border-style: solid;
     border-radius: 12px;
-    max-width: 250px;
+    max-width: 355px;
 }
 
+.signupwrapper {
+    padding-inline: 20vw;
+}
 .inputwrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* align-items: center; */
 }
 
+.bottompartidk {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
 form button {
-    width: 10%;
+    cursor: pointer;
+    max-width: 30%;
+    height: 50px;
+}
+
+form {
+    width: 100%;
 }
 input[type=text] {
     color: var(--text);
@@ -46,14 +52,12 @@ input:focus {
     border-color: var(--accent);
 }
 
-.input {
+.loginfield {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
 }
 
-.input p {
+.loginfield p {
     font-size: 1.5rem;
     margin: 0;
 }
