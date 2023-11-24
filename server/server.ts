@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import { BookList, book } from './model/BookList.js';
 import user from "./model/User.js";
+import {authMiddleware} from './middleware/auth'
 // import path from "path";
 
 // readup on: callback fns, asynchronous js (promises, async/await etc) because im bad at them
@@ -164,9 +165,15 @@ function checkUserAndGenerateToken(data, req, res) {
 }
 
 /* Api to add booklists. Which are just lists of books */
-app.post("/api/v1/add-booklist", async (req, res) => {
+app.post("/api/v1/add-booklist", authMiddleware, async (req, res) => { // authMiddleware just needs the token posted in x-auth-token that you Cookies.get from cookies if you've logged in
+  console.log(req.user)
   if (req.body.books) {
     let NewBooklist = new BookList();
+  } else {
+    res.status(400).json({
+      status: false,
+      ErrorMessage: "please include bookname"
+    })
   }
 })
 
